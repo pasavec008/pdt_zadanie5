@@ -1,0 +1,179 @@
+curl --request PUT \
+  --url http://localhost:9200/tweets/_mapping \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"dynamic": false,
+	"properties": {
+		"id": { "type": "long" },
+		"content": {
+			"type": "text",
+			"analyzer": "englando"
+		},
+		"possibly_sensitive": {"type": "boolean"},
+		"language": {"type": "keyword"},
+		"source": {
+			"type": "text",
+			"analyzer": "keyword"
+		},
+		"retweet_count": {"type": "integer"},
+		"reply_count": {"type": "integer"},
+		"like_count": {"type": "integer"},
+		"quote_count": {"type": "integer"},
+		"created_at": {"type": "date"},
+		"author": {
+			"properties": {
+				"id": {"type": "long"},
+				"name": {
+					"type": "text",
+					"analyzer": "englando",
+					"fields": {
+						"name_custom_ngram":{
+							"type":"text",
+							"analyzer":"custom_ngram"
+						},
+						"name_custom_shingles":{
+							"type":"text",
+							"analyzer":"custom_shingles"
+						}
+					}
+				},
+				"username": {
+					"type": "text",
+					"analyzer": "englando",
+					"fields": {
+						"username_custom_ngram":{
+							"type":"text",
+							"analyzer":"custom_ngram"
+						}
+					}
+				},
+				"description": {
+					"type": "text",
+					"analyzer": "englando",
+					"fields": {
+						"description_custom_shingles":{
+							"type":"text",
+							"analyzer":"custom_shingles"
+						}
+					}
+				},
+				"followers_count": {"type": "integer"},
+				"following_count": {"type": "integer"},
+				"tweet_count": {"type": "integer"},
+				"listed_count": {"type": "integer"}
+			}
+		},
+		"hashtags": {
+			"type": "nested",
+			"properties": {
+				"id": {"type": "long"},
+				"tag": {
+					"type": "text",
+					"analyzer": "lowercase",
+					"fielddata": true
+				}
+			}
+		},
+		"links": {
+			"type": "nested",
+			"properties": {
+				"id": {"type": "long"},
+				"url": {"type": "keyword"},
+				"title": {
+					"type": "text",
+					"analyzer": "englando"
+				},
+				"description": {
+					"type": "text",
+					"analyzer": "englando"
+				}
+			}
+		},
+		"annotations": {
+			"type": "nested",
+			"properties": {
+				"id": {"type": "long"},
+				"value": {"type": "keyword"},
+				"type": {"type": "keyword"},
+				"probability": {"type": "float"}
+			}
+		},
+		"context_domains": {
+			"type": "nested",
+			"properties": {
+				"id": {"type": "long"},
+				"name": {"type": "keyword"},
+				"description": {
+					"type": "text",
+					"analyzer": "englando"
+				}
+			}
+		},
+		"context_entities": {
+			"type": "nested",
+			"properties": {
+				"id": {"type": "long"},
+				"name": {"type": "keyword"},
+				"description": {
+					"type": "text",
+					"analyzer": "englando"
+				}
+			}
+		},
+		"conversation_references": {
+			"type": "nested",
+			"properties": {
+				"id": {"type": "long"},
+				"type": {"type": "keyword"},
+				"parent_conversation": {
+					"properties": {
+						"author": {
+							"properties": {
+								"id": {"type": "long"},
+								"name": {
+									"type": "text",
+									"analyzer": "englando",
+									"fields": {
+										"name_custom_ngram":{
+											"type":"text",
+											"analyzer":"custom_ngram"
+										},
+										"name_custom_shingles":{
+											"type":"text",
+											"analyzer":"custom_shingles"
+										}
+									}
+								},
+								"username": {
+									"type": "text",
+									"analyzer": "englando",
+									"fields": {
+										"username_custom_ngram":{
+											"type":"text",
+											"analyzer":"custom_ngram"
+										}
+									}
+								}
+							}
+						},
+						"content": {
+							"type": "text",
+							"analyzer": "englando"
+						},
+						"hashtags": {
+							"type": "nested",
+							"properties": {
+								"id": {"type": "long"},
+								"tag": {
+									"type": "text",
+									"analyzer": "lowercase",
+									"fielddata": true
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}'
